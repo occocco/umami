@@ -1,135 +1,93 @@
-# Turborepo starter
+# Study
 
-This Turborepo starter is maintained by the Turborepo core team.
+TypeScript 풀스택 모노레포 프로젝트
 
-## Using this example
+## 기술 스택
 
-Run the following command:
+| 영역 | 기술 |
+|-----|-----|
+| 모노레포 | Turborepo + pnpm workspaces |
+| 백엔드 | NestJS 11, Prisma 7, PostgreSQL 16 |
+| 프론트엔드 | Next.js 16, React 19, Tailwind CSS 4 |
+| 캐싱 | Redis 7 |
+| 언어 | TypeScript 5.x |
 
-```sh
-npx create-turbo@latest
-```
-
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
+## 프로젝트 구조
 
 ```
-cd my-turborepo
+apps/
+├── backend/          # NestJS API 서버 (포트 3000)
+└── frontend/         # Next.js 웹앱 (포트 3001)
 
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+packages/
+├── ui/               # 공유 React 컴포넌트 (@repo/ui)
+├── eslint-config/    # 공유 ESLint 설정
+└── typescript-config/# 공유 TypeScript 설정
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+## 시작하기
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+### 필수 조건
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+- Node.js 18+
+- pnpm 9+
+- Docker & Docker Compose
 
-### Develop
+### 설치
 
-To develop all apps and packages, run the following command:
+```bash
+# 의존성 설치
+pnpm install
 
-```
-cd my-turborepo
+# 인프라 실행 (PostgreSQL, Redis)
+docker compose up -d
 
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
+# 환경변수 설정
+cp apps/backend/.env.example apps/backend/.env
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+### 개발 서버 실행
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+```bash
+# 전체 앱 실행
+pnpm dev
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
+# 개별 앱 실행
+pnpm dev --filter=backend
+pnpm dev --filter=frontend
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+## 주요 명령어
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+```bash
+pnpm dev              # 개발 서버 실행
+pnpm build            # 프로덕션 빌드
+pnpm lint             # ESLint 검사
+pnpm check-types      # TypeScript 타입 검사
+pnpm format           # Prettier 포맷팅
 
+# 데이터베이스
+pnpm db:migrate       # Prisma 마이그레이션
+pnpm db:studio        # Prisma Studio GUI
+
+# 테스트 (backend)
+cd apps/backend
+pnpm test             # 단위 테스트
+pnpm test:e2e         # E2E 테스트
+pnpm test:cov         # 커버리지 리포트
 ```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+## 환경 변수
+
+### Backend (`apps/backend/.env`)
+
+```env
+DATABASE_URL=postgresql://myuser:secret@localhost:5432/mydatabase
+REDIS_HOST=localhost
+REDIS_PORT=6379
 ```
 
-## Useful Links
+## API 문서
 
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+백엔드 서버 실행 후 Swagger UI 접속:
+- http://localhost:3000/api
